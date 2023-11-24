@@ -394,17 +394,26 @@ def get_inference(network, data_loader, device, epoch):
     for bid, sample in enumerate(data_loader):
         sample = to_device(sample, device)
         feat = sample["feats"]["imu0"]
+        print(f"bid is {bid}")
+        print(f"feat shape is: {feat.shape}")
+        print(f"feat is: {feat}")
         
         pred, pred_cov = network(feat)
+        print(f"pred is: {pred}")
+        print(f"pred_cov is: {pred_cov}")
 
         targ = sample["targ_dt_World"][:,-1,:]
+        print(f"trag is: {targ.shape}")
         # Only grab the last prediction in this case
         if len(pred.shape) == 3:
             pred = pred[:,:,-1]
             pred_cov = pred_cov[:,:,-1]
+        print(f"new_pred: {pred.shape}")
+        print(f"new_pred_cov: {pred_cov.shape}")
         
         assert len(pred.shape) == 2
         loss = get_loss(pred, pred_cov, targ, epoch)
+        print(f"loss is: {loss.shape}")
 
         targets_all.append(torch_to_numpy(targ))
         preds_all.append(torch_to_numpy(pred))
@@ -528,14 +537,12 @@ def net_test(args):
 
     # initialize containers
     all_metrics = {}
-
     for data in test_list:
         logging.info(f"Processing {data}...")
         try:
             #seq_dataset = FbSequenceDataset(
             #    args.root_dir, [data], args, data_window_config, mode="test"
             #)
-
             seq_dataset = MemMappedSequencesDataset(
                 args.root_dir,
                 "test",
@@ -544,7 +551,7 @@ def net_test(args):
                 store_in_ram=True,
             )
 
-            seq_loader = DataLoader(seq_dataset, batch_size=1024, shuffle=False)
+            seq_loader = DataLoader(seq_dataset, batch_size=args.batch_size, shuffle=False)
         except OSError as e:
             print(e)
             continue

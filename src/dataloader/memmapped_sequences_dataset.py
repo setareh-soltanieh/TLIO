@@ -146,12 +146,15 @@ class MemMappedSequencesDataset(Dataset, SequencesDataset):
             desc = self.data_descriptions[i]
             for j, sensor_basename in enumerate(self.sensor_file_basenames):
                 filename = os.path.join(self.data_path, seq_id, sensor_basename+".npy")
+                # print(f"filename is: {filename}")
                 seq_memmap_filenames[sensor_basename] = filename
                 sensor_desc = desc[sensor_basename]
+
                 num_cols = sum([
                     int(c.split("(")[1].split(")")[0]) for c in sensor_desc["columns_name(width)"]
                 ])
                 cumulated_duration_hrs += 1e-6 * (sensor_desc["t_end_us"] - sensor_desc["t_start_us"]) / 60 / 60
+                # print(f"cumulated_duration_hrs is: {cumulated_duration_hrs}")
                 self.max_num_rows = sensor_desc["num_rows"] if self.max_num_rows is None \
                         else max(sensor_desc["num_rows"], self.max_num_rows)
                 self.min_num_rows = sensor_desc["num_rows"] if self.min_num_rows is None \

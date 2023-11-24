@@ -77,13 +77,13 @@ def do_train(network, train_loader, device, epoch, optimizer, transforms=[]):
 
     #for bid, (feat, targ, _, _) in enumerate(train_loader):
     for bid, sample in enumerate(train_loader):
+        print(sample)
         sample = to_device(sample, device)
         for transform in transforms:
             sample = transform(sample)
         feat = sample["feats"]["imu0"]
         optimizer.zero_grad()
         pred, pred_cov = network(feat)
-
         if len(pred.shape) == 2:
             targ = sample["targ_dt_World"][:,-1,:]
         else:
@@ -282,6 +282,7 @@ def net_train(args):
         num_workers=args.workers,
         persistent_workers=args.persistent_workers,
     )
+
     data.prepare_data()
     
     train_list = data.get_datalist("train")
@@ -384,6 +385,7 @@ def net_train(args):
 
         logging.info(f"-------------- Training, Epoch {epoch} ---------------")
         start_t = time.time()
+        print(f"train_loader {train_loader}")
         train_attr_dict = do_train(network, train_loader, device, epoch, optimizer, train_transforms)
         write_summary(summary_writer, train_attr_dict, epoch, optimizer, "train")
         end_t = time.time()

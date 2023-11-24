@@ -18,6 +18,7 @@ if __name__ == "__main__":
     #parser.add_argument("--train_list", type=str, default=None)
     #parser.add_argument("--val_list", type=str, default=None)
     #parser.add_argument("--test_list", type=str, default=None)
+    
     parser.add_argument(
         "--root_dir", type=str, 
         default="local_data/tlio_golden", help="Path to data directory"

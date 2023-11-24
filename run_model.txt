@@ -1,0 +1,1 @@
+python main_net.py --mode test --root_dir local_data/tlio_golden --model_path models/resnet/checkpoint_best.pt --out_dir test_outputs
